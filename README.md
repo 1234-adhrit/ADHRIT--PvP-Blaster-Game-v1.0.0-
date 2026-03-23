@@ -102,3 +102,7 @@ screenshots of the Game:
 - **Port already in use:** Use another port:
   - PowerShell: `$env:PORT=3001; npm start`
 - **No players / stuck waiting:** A match starts only when at least 2 players are in the same room.
+
+## Play Online
+
+https://adhrit-pvp-blaster-game.onrender.com
