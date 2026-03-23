@@ -1,0 +1,153 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PvP Blaster</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Space+Mono&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <canvas id="game"></canvas>
+
+    <div id="lobby">
+      <div class="lobby-card">
+        <div class="lobby-header">
+          <div class="lobby-title">PvP Blaster</div>
+          <div class="lobby-subtitle">Create or join a server. Min 2, max 10 players.</div>
+        </div>
+
+        <div class="lobby-section">
+          <div class="section-title">Call Sign</div>
+          <div class="row">
+            <input id="nameInput" type="text" maxlength="16" placeholder="Pilot name" />
+            <button id="saveName">Save</button>
+          </div>
+          <div class="hint" id="nameHint">Pick a name before joining.</div>
+        </div>
+
+        <div class="lobby-section">
+          <div class="section-title">Create Server</div>
+          <div class="row">
+            <input id="roomNameInput" type="text" maxlength="20" placeholder="Server name" />
+            <button id="createRoom">Create</button>
+          </div>
+          <label class="checkbox">
+            <input id="createSpectate" type="checkbox" />
+            Join as spectator
+          </label>
+        </div>
+
+        <div class="lobby-section">
+          <div class="section-title">Server Password (Optional)</div>
+          <div class="row">
+            <input id="roomPasswordInput" type="text" maxlength="24" placeholder="Leave empty for public" />
+          </div>
+        </div>
+
+        <div class="lobby-section">
+          <div class="section-title">Join by Code</div>
+          <div class="row">
+            <input id="roomCodeInput" type="text" maxlength="8" placeholder="ABCDE" />
+            <button id="joinCode">Join</button>
+          </div>
+          <button id="rejoinLast" class="ghost-btn" type="button" style="display: none;">
+            Rejoin last
+          </button>
+          <label class="checkbox">
+            <input id="codeSpectate" type="checkbox" />
+            Join as spectator
+          </label>
+        </div>
+
+        <div class="lobby-section">
+          <div class="section-title">Available Servers</div>
+          <div id="roomList" class="room-list"></div>
+        </div>
+
+        <div id="lobbyStatus" class="hint"></div>
+        <div id="lobbyError" class="error"></div>
+      </div>
+    </div>
+
+    <div id="hud" class="ui-panel">
+      <div class="hud-title">PvP Blaster</div>
+      <div class="hud-line">Move: WASD or Arrow Keys</div>
+      <div class="hud-line">Aim: Mouse</div>
+      <div class="hud-line">Shoot: Hold Left Mouse</div>
+      <div class="hud-line">Grenade: G</div>
+      <div class="hud-line">Options: O</div>
+      <div class="hud-line" id="mouseLockLine">Mouse Lock: Click canvas (Esc to release)</div>
+      <div class="hud-line" id="weaponStatus">Weapon: Rifle (1/2 to swap)</div>
+      <div class="hud-line" id="spectatorStatus"></div>
+      <div class="hud-line" id="matchStatus"></div>
+      <div class="hud-line" id="latency">Connecting...</div>
+      <button id="leaveRoom" class="leave-btn">Leave Server</button>
+    </div>
+
+    <div id="scoreboard" class="ui-panel"></div>
+    <div id="teams" class="ui-panel"></div>
+    <div id="events" class="ui-panel"></div>
+    <div id="killfeed" class="ui-panel"></div>
+    <div id="mapVote" class="ui-panel"></div>
+    <div id="spectateControls" class="ui-panel">
+      <div class="spectate-title">Spectate Player</div>
+      <div class="spectate-buttons">
+        <button id="spectatePrev" type="button">Prev</button>
+        <button id="spectateNext" type="button">Next</button>
+      </div>
+    </div>
+    <canvas id="minimap" class="ui-panel"></canvas>
+    <div id="chat" class="ui-panel">
+      <div class="chat-title">Room Chat</div>
+      <div class="chat-scope">
+        <button id="chatScopeGlobal" class="scope-btn active" type="button">Global</button>
+        <button id="chatScopeTeam" class="scope-btn" type="button">Team</button>
+      </div>
+      <div id="chatMessages" class="chat-messages"></div>
+      <div id="chatMuted" class="chat-muted"></div>
+      <div class="chat-input">
+        <input id="chatInput" type="text" maxlength="140" placeholder="Type and press Enter..." />
+        <button id="chatSend">Send</button>
+      </div>
+      <div class="chat-hint">Commands: /mute Name · /unmute Name · /block Name · /unblock Name</div>
+    </div>
+    <div id="settings" class="ui-panel">
+      <div class="settings-title">Settings</div>
+      <label class="settings-row">
+        <span>Volume</span>
+        <input id="settingVolume" type="range" min="0" max="100" step="1" />
+        <span id="settingVolumeValue" class="settings-value"></span>
+      </label>
+      <label class="settings-row">
+        <span>Sensitivity</span>
+        <input id="settingSensitivity" type="range" min="0.4" max="2.5" step="0.05" />
+        <span id="settingSensitivityValue" class="settings-value"></span>
+      </label>
+      <label class="settings-row">
+        <span>UI Scale</span>
+        <input id="settingUiScale" type="range" min="0.8" max="1.4" step="0.05" />
+        <span id="settingUiScaleValue" class="settings-value"></span>
+      </label>
+    </div>
+
+    <div id="touch-controls">
+      <div id="touch-joystick">
+        <div id="touch-joystick-base"></div>
+        <div id="touch-joystick-stick"></div>
+      </div>
+      <div class="touch-buttons">
+        <button id="touch-fire" type="button">FIRE</button>
+        <button id="touch-grenade" type="button">GREN</button>
+      </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="client.js"></script>
+  </body>
+</html>
