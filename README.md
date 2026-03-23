@@ -90,7 +90,7 @@ Players vote for the next map. When the timer ends, the server picks the map wit
 
 ## Screenshots / Gameplay
 
-These are placeholder images you can replace with real screenshots or clips:
+screenshots of the Game:
 
 ![Lobby](docs/lobby.png)
 ![In-Game HUD](docs/hud.png)
